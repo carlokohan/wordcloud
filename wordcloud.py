@@ -1,4 +1,5 @@
 import operator
+import os
 
 def generate_wordcloud(wordlist):
     wordcloud = {}
@@ -16,24 +17,38 @@ def generate_wordcloud(wordlist):
 
     return wordcloud
 
-text = open("files/words.txt", "r") 
 
+path = './files/'
+dir_list = os.listdir(path)
 wordlist = dict() 
 
-for line in text: 
-    line = line.strip() 
-    line = line.lower() 
-    word = line.strip()
+if len(dir_list) < 5:
+    print('Less than 5 files. exiting.')
+    quit()
 
-    if word in wordlist:
-        wordlist[word] = wordlist[word] + 1
-    else: 
-        wordlist[word] = 1
+for file_name in dir_list:
+    text = open("files/" + file_name, "r") 
+
+    for line in text: 
+        line = line.strip() 
+        line = line.lower() 
+        word = line.strip()
+
+        if word in wordlist:
+            wordlist[word] = wordlist[word] + 1
+        else: 
+            wordlist[word] = 1
 
 wordcloud = generate_wordcloud(wordlist)
-for key in list(wordcloud.keys()): 
-    print(key, ":", wordcloud[key])
+sorted_wordlist = dict(sorted(wordlist.items(), key=lambda item: item[1], reverse=True))
 
+file_ptr = open("output.txt", "w")
+
+for key in list(wordcloud.keys()): 
+    print(key, " : ", wordlist[key] , " : ", wordcloud[key])
+    file_ptr.write(key + "\t" + str(wordlist[key]) + "\t" + wordcloud[key] + "\n")
+
+file_ptr.close()
 
 
 
